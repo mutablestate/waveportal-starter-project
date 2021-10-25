@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@fontsource/fira-mono': ^4.5.0
+  '@sveltejs/adapter-static': ^1.0.0-next.21
   '@sveltejs/kit': next
   eslint: ^8.1.0
   eslint-config-prettier: ^8.3.0
@@ -16,6 +17,7 @@ dependencies:
   ethers: 5.5.1
 
 devDependencies:
+  '@sveltejs/adapter-static': 1.0.0-next.21
   '@sveltejs/kit': 1.0.0-next.189_svelte@3.44.0
   eslint: 8.1.0
   eslint-config-prettier: 8.3.0_eslint@8.1.0
@@ -381,6 +383,10 @@ packages:
     dependencies:
       estree-walker: 2.0.2
       picomatch: 2.3.0
+    dev: true
+
+  /@sveltejs/adapter-static/1.0.0-next.21:
+    resolution: {integrity: sha512-B4+QoUVAaANKx+mHntG8SqF45zbj3Ct4Akg/cGauo6COyfKZRhO5OsMa+wPuT2TKJBZC4eEDK0p+p9nyQBkxKQ==}
     dev: true
 
   /@sveltejs/kit/1.0.0-next.189_svelte@3.44.0:
