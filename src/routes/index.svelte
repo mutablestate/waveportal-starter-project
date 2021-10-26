@@ -6,12 +6,15 @@
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
 	import wavePortalAbi from '$lib/WavePortal.json';
+	import MiningSpin from '$lib/MiningSpin.svelte';
 	import { currentAccount } from '../stores';
 
 	const contractAddress = '0x22E06b837004f4756690a6cD9F1ddDB7eF7eBf7b';
 	const contractAbi = wavePortalAbi.abi;
 
 	let ethereum = null;
+	let mining = false;
+	let count = 0;
 
 	async function handleConnectWallet() {
 		const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -25,14 +28,16 @@
 			const signer = provider.getSigner();
 			const wavePortalContract = new ethers.Contract(contractAddress, contractAbi, signer);
 
-			let count = await wavePortalContract.getTotalWaves();
+			count = await wavePortalContract.getTotalWaves();
 			console.log('Retrieved total wave count...', count.toNumber());
 
 			const waveTxn = await wavePortalContract.wave();
+			mining = true;
 			console.log('Mining...', waveTxn.hash);
 
 			await waveTxn.wait();
 			console.log('Mined -- ', waveTxn.hash);
+			mining = false;
 
 			count = await wavePortalContract.getTotalWaves();
 			console.log('Retrieved total wave count...', count.toNumber());
@@ -69,14 +74,17 @@
 
 <div class="mainContainer">
 	<div class="dataContainer">
-		<div class="header">👋 Hey there!</div>
+		<div class="header">Join ∞ + {count} people that 👋</div>
 
 		<div class="bio">
-			<div>I used SvelteKit to build and Cloudflare to deploy my WavePortal!</div>
-			<div>Connect your Ethereum wallet and wave at me!</div>
+			<div>Connect your Ethereum wallet to wave!</div>
 		</div>
 
 		<button class="waveButton" on:click={handleWave}>Wave at Me</button>
+
+		{#if mining}
+			<MiningSpin />
+		{/if}
 
 		{#if !$currentAccount}
 			<button class="waveButton" on:click={handleConnectWallet}>Connect Wallet</button>

@@ -7,9 +7,9 @@
 </main>
 
 <footer>
+	<p>Built with SvelteKit and deployed with Cloudflare!</p>
 	<p>
-		visit <a href="https://buildspace.so">buildspace.so</a> to learn how to build a Web3 App with Solidity
-		+ Ethereum Smart Contracts.
+		Visit <a href="https://buildspace.so">buildspace.so</a> to learn about Web3
 	</p>
 </footer>
 
