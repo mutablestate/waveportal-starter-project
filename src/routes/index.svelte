@@ -10,7 +10,7 @@
 	import WaveInfo from '$lib/WaveInfo.svelte';
 	import { currentAccount, allWaves } from '../stores';
 
-	const contractAddress = '0x72AE3fb76750415E684d0D2Cfb9937f63A233EaC';
+	const contractAddress = '0x5B669053a320aB406C207c9A956D5c2D15A72d74';
 	const contractAbi = wavePortalAbi.abi;
 
 	let ethereum = null;
