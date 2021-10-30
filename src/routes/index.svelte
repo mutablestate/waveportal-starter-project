@@ -6,17 +6,19 @@
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
 	import wavePortalAbi from '$lib/WavePortal.json';
+	import Cooldown from '$lib/Cooldown.svelte';
 	import MiningSpin from '$lib/MiningSpin.svelte';
 	import WaveInfo from '$lib/WaveInfo.svelte';
 	import { currentAccount, allWaves } from '../stores';
 
-	const contractAddress = '0x5B669053a320aB406C207c9A956D5c2D15A72d74';
+	const contractAddress = '0xC9B3838447a267E9B6E22BDb128ed2422029a74B';
 	const contractAbi = wavePortalAbi.abi;
 
 	let ethereum = null;
 	let mining = false;
 	let count = 0;
 	let waveMsg = 'Change me!';
+	let showCooldown = false;
 
 	async function getAllWaves() {
 		try {
@@ -63,11 +65,14 @@
 			await waveTxn.wait();
 			console.log('Mined -- ', waveTxn.hash);
 			mining = false;
+			waveMsg = '';
 
 			count = await wavePortalContract.getTotalWaves();
 			console.log('Retrieved total wave count...', count.toNumber());
 			getAllWaves();
 		} catch (error) {
+			mining = false;
+			showCooldown = true;
 			console.log('Ooof! Your wave failed.', error);
 		}
 	}
@@ -83,6 +88,10 @@
 		} else {
 			console.log('No authorized account found');
 		}
+	}
+
+	function handleCooldown() {
+		showCooldown = false;
 	}
 
 	onMount(() => {
@@ -101,26 +110,33 @@
 
 <div class="mainContainer">
 	<div class="dataContainer">
-		<div class="header">Join ∞ + {count} people that 👋</div>
-
-		<div class="bio">
-			<div>Connect your Ethereum wallet to wave!</div>
-		</div>
-
-		<label for="msg" class="label">Wave Message</label>
-		<input id="msg" type="text" class="text-input" bind:value={waveMsg} />
-		<button class="waveButton" on:click={handleWave}>Wave at Me</button>
-
-		{#if mining}
-			<MiningSpin />
-		{/if}
+		<div class="header">Join {count} amazing people that 👋</div>
 
 		{#if !$currentAccount}
+			<div class="connect">Connect your Ethereum wallet!</div>
 			<button class="waveButton" on:click={handleConnectWallet}>Connect Wallet</button>
+		{:else}
+			<div class="connect">Connected: {$currentAccount}</div>
 		{/if}
 
+		<div style="margin-top: 32px;">
+			{#if mining || showCooldown}
+				{#if mining}
+					<MiningSpin />
+				{/if}
+				{#if showCooldown}
+					<Cooldown on:message={handleCooldown} />
+				{/if}
+			{:else}
+				<div class="grid gap" style="grid-template-columns: 300px minmax(0, 1fr);">
+					<input id="msg" type="text" class="text-input" bind:value={waveMsg} />
+					<button class="waveButton" on:click={handleWave}>Say hi</button>
+				</div>
+			{/if}
+		</div>
+
 		{#if $allWaves.length > 0}
-			<div class="hof-title">Hall of Fame</div>
+			<div class="hof-title">Hall of Waves</div>
 		{/if}
 		{#each $allWaves as wave}
 			<WaveInfo {wave} />
@@ -129,11 +145,6 @@
 </div>
 
 <style>
-	.label {
-		font-weight: 500;
-		padding-top: 16px;
-		padding-bottom: 4px;
-	}
 	.text-input {
 		font-weight: 400;
 		padding: 8px;
@@ -174,15 +185,24 @@
 		font-weight: 600;
 	}
 
-	.bio {
+	.connect {
 		text-align: center;
-		color: gray;
+		color: #03c03c;
 		margin-top: 16px;
+	}
+
+	.grid {
+		display: -ms-grid;
+		display: grid;
+	}
+
+	.gap {
+		grid-gap: 8px;
+		gap: 8px;
 	}
 
 	.waveButton {
 		cursor: pointer;
-		margin-top: 16px;
 		padding: 8px;
 		border: 0;
 		border-radius: 5px;
